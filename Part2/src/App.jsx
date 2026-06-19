@@ -1,12 +1,13 @@
 import { useState, useEffect} from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import personService from './services/persons'
 
-const Names=({persons})=>{
+const Names=({persons, deleteName})=>{
   return (
     <div>
       <h2>Numbers</h2>
-      {persons.map(person => <p key={person.name}>{person.name}: {person.number}</p>)}
+      {persons.map(person => <p key={person.name}>{person.name}: {person.number} <button onClick={()=>deleteName(person.id,person.name)}>delete</button></p>)}
+      
     </div>
   )
 }
@@ -67,13 +68,25 @@ const App = (props) => {
     .create(nameObject)
     .then(response => {
       setPersons(persons.concat(response.data))
-    })
       setNewName('')
       setNewNumber('')
       setFilter('')
+    })
+      
   }
-
-
+const deleteName = (id) => {
+  const person = persons.find(p => p.id === id)
+  if (window.confirm(`Delete ${person.name}?`)) {
+    personService
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+      .catch(error => {
+        console.error('Error deleting person:', error)
+      })
+  }
+}
 
 
   const handleNameChange = (event) => {
@@ -102,7 +115,7 @@ const filteredPersons = persons.filter(person => person.name.toLowerCase().inclu
       <h2>Phonebook</h2>
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <PersonForm addname={addname} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
-      <Names persons={filteredPersons} />
+      <Names persons={filteredPersons} deleteName={deleteName} />
     </div>
   )
 }
