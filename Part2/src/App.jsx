@@ -43,7 +43,7 @@ const App = (props) => {
   
   useEffect(() => {
   axios
-    .get('http://localhost:3001/persons')
+    .get('http://localhost:3002/persons')
     .then(response => {
       setPersons(response.data)
     })
@@ -62,12 +62,15 @@ const App = (props) => {
         name: newName,
         number: newNumber
       }
-  setPersons(persons.concat(nameObject))
+  axios
+  .post('http://localhost:3002/persons', nameObject)
+  .then(response => {
+    setPersons(persons.concat(response.data))
+  })
       setNewName('')
       setNewNumber('')
       setFilter('')
   }
-
 
 
 
