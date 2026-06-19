@@ -1,9 +1,25 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios'
 
+const api_key =import.meta.env.VITE_API_KEY
+console.log(api_key)
 const App = () => {
   const[countries, setCountries] = useState([])
   const[search, setSearch] = useState('')
+  const[weather, setWeather] = useState(null)
+
+    const filteredCountries= countries.filter(country=>country.name.common.toLowerCase().includes(search.toLowerCase()))
+
+  useEffect(() => {
+    if(filteredCountries.length === 1){
+      const capital = filteredCountries[0].capital[0]
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${api_key}`)
+        .then(response => {
+          setWeather(response.data)
+        })
+    }
+  }, [filteredCountries])
 
   useEffect(() => {
     axios
@@ -17,7 +33,7 @@ const App = () => {
     setSearch(event.target.value)
   }
 
-  const filteredCountries= countries.filter(country=>country.name.common.toLowerCase().includes(search.toLowerCase()))
+
 
   return (
    <div>
@@ -37,6 +53,14 @@ const App = () => {
         {Object.values(filteredCountries[0].languages).map(language => <li key={language}>{language}</li>)}
       </ul>
       <img src={filteredCountries[0].flags.png} alt={`flag of ${filteredCountries[0].name.common}`} />
+      {weather && (
+    <div>
+      <h2>Weather in {filteredCountries[0].capital[0]}</h2>
+      <p>temperature {(weather.main.temp - 273.15).toFixed(2)} Celsius</p>
+      <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={`weather icon for ${filteredCountries[0].capital[0]}`} />
+      <p>wind {weather.wind.speed} m/s</p>
+    </div>
+  )}
     </div>
    )}
    </div>
