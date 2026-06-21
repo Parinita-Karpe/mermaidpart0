@@ -25,8 +25,11 @@ const persons = [
   }
 ]
 
-app.get('/', (request, response) => {
-  response.send('<h1>Phonebook Backend</h1>')
+app.get('/info', (request, response) => {
+  response.send(`<p>Phonebook Backend info for 4 people</p>
+    <p>${new Date()}</p>`
+  )
+
 })
 
 app.get('/api/persons', (request, response) => {
