@@ -39,22 +39,21 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
-})
-app.post('/api/persons', (request, response) => {
+
+app.post('/api/persons/', (request, response) => {
   const body = request.body
     if (!body.name || !body.number) {
         return response.status(400).json({
             error: 'name or number is missing'
         })
     }
+    const existingPerson = persons.find(person => person.name === body.name)
+    if (existingPerson) {
+        return response.status(400).json({  
+            error: 'name must be unique'
+        })
+    }
+    
     const newPerson = {
         id: (Math.floor(Math.random() * 100000)).toString(),
         name: body.name,
@@ -70,6 +69,17 @@ app.delete('/api/persons/:id', (request, response) => {
   if (personIndex !== -1) {
     persons.splice(personIndex, 1)
     response.status(204).end()
+  } else {
+    response.status(404).end()
+  }
+})
+
+app.get('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  const person = persons.find(person => person.id === id)
+
+  if (person) {
+    response.json(person)
   } else {
     response.status(404).end()
   }
