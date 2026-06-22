@@ -1,8 +1,14 @@
+
+const baseurl='/api/persons'
+
+
 const morgan=require('morgan')
+const cors = require('cors')
 const express = require('express')
 
-const app = express()
 
+const app = express()
+app.use(cors())
 app.use(express.json())
 
 let persons = [
@@ -29,7 +35,7 @@ let persons = [
 ]
 
 app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook Backend info for 4 people</p>
+  response.send(`<p>Phonebook Backend info for ${persons.length} people</p>
     <p>${new Date()}</p>`
   )
 
@@ -84,7 +90,6 @@ app.get('/api/persons/:id', (request, response) => {
     response.status(404).end()
   }
 })
-
 
 
 const unknownEndpoint = (request, response) => {
