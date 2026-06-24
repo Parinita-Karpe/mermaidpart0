@@ -20,5 +20,15 @@ personSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+app.delete('/api/persons/:id', (request, response) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformatted id' })
+    })
+})
 
 module.exports = mongoose.model('Person', personSchema)

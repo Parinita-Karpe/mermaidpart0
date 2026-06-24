@@ -1,36 +1,26 @@
-import axios from 'axios'
-const baseUrl='/api/persons'
-
-const getAll=()=>{
-    return axios.get(baseUrl).then(response=>response.data)
-
-}
-
-const create=newPerson=>{
-    return axios.post(baseUrl,newPerson).then(response=>response.data)
-}
-
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI
+// Use your actual MongoDB connection string here
+const url = process.env.MONGODB_URI || 'mongodb+srv://fullstack:YOUR_PASSWORD_HERE@cluster0.cmgxhqf.mongodb.net/phonebookApp?retryWrites=true&w=majority'
 
 mongoose.set('strictQuery', false)
 
 mongoose.connect(url)
+  .then(() => console.log('connected to MongoDB'))
+  .catch(error => console.log('error connecting to MongoDB:', error.message))
 
 const personSchema = new mongoose.Schema({
   name: String,
   number: String,
 })
-personSchema.set('toJSON',
-    {
-        transform: (document,returnedobject)=>{
-            returnedobject.id=returnedobject._id.toString()
-            delete returnedobject._id
-            delete returnedobject.__v
-        }
-    }
-)
+
+// 3.18 / 3.15: Transform output to match frontend expectations
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
 
 module.exports = mongoose.model('Person', personSchema)
-export default{getAll, create}
