@@ -22,7 +22,7 @@ const personSchema = new mongoose.Schema({
     validate: {
       validator: function(v) {
         // Matches 2 or 3 digits, a hyphen, followed by only digits to the end
-        return /^\d{2,3}-\d+$/.test(v);
+        return /^\d{2,3}-\d+$/.test(v)
       },
       message: props => `${props.value} is not a valid phone number! Format must be XX-XXXXX... or XXX-XXXXX...`
     }

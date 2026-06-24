@@ -28,8 +28,7 @@ const person=new Person(
     name,number,
   }
 )
-
-person.save().then(result => {
-  console.log('note saved!')
+person.save().then(() => {
+  console.log('person saved!')
   mongoose.connection.close()
 })
