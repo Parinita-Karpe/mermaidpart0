@@ -20,6 +20,26 @@ personSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  // { new: true } returns the updated document instead of the original
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      if (updatedPerson) {
+        response.json(updatedPerson)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+})
+
 app.delete('/api/persons/:id', (request, response) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => {
