@@ -10,8 +10,23 @@ mongoose.connect(url)
   .catch(error => console.log('error connecting to MongoDB:', error.message))
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    required: true,
+    validate: {
+      validator: function(v) {
+        // Matches 2 or 3 digits, a hyphen, followed by only digits to the end
+        return /^\d{2,3}-\d+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid phone number! Format must be XX-XXXXX... or XXX-XXXXX...`
+    }
+  }
 })
 
 // 3.18 / 3.15: Transform output to match frontend expectations
