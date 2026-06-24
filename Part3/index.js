@@ -20,6 +20,39 @@ personSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+// 1. Fetch all entries from database
+app.get('/api/persons', (request, response, next) => {
+  Person.find({})
+    .then(persons => {
+      response.json(persons)
+    })
+    .catch(error => next(error))
+})
+
+// 2. Fetch individual entry from database (Matches your screenshot)
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+})
+
+// 3. Info page showing real database counts
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      response.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}</p>
+      `)
+    })
+    .catch(error => next(error))
+})
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
