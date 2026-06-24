@@ -11,7 +11,7 @@ const personSchema = new mongoose.Schema({
   name: String,
   number: String,
 })
-
+app.use(express.static('dist'))
 // Format the ID from Object to String for the frontend
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
