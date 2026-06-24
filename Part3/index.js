@@ -30,5 +30,17 @@ app.delete('/api/persons/:id', (request, response) => {
       response.status(400).send({ error: 'malformatted id' })
     })
 })
+// Define the error handler middleware
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
 
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+// This must be the last loaded middleware!
+app.use(errorHandler)
 module.exports = mongoose.model('Person', personSchema)
